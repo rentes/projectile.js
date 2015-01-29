@@ -1,5 +1,5 @@
 /**
- * Created by miguel on 27/01/15.
+ * Projectile project.
  */
 var posX; /* mouse position co-ordinate X */
 var posY; /* mouse position co-ordinate Y */
@@ -21,15 +21,19 @@ var Cd = 0.47; /* dimensionless */
 var rho = 1.22; /* kg / m^3 */
 var projectileArea;
 var hitGround = false;
+var velocity;
+var angle;
 
 function initializeProjectile(event) {
     posX = event.clientX;
     posY = event.clientY;
+    velocity = Math.floor(Math.random() * 11); /* random number between 0 and 10 */
+    angle = Math.floor(Math.random() * 361); /* random number between 0 and 360 */
     projectile = {
         position: {x: posX, y: posY},
-        velocity: {x: -10, y: -5},
+        velocity: {x: Math.cos(angle * (Math.PI / 180)) * velocity, y: - Math.sin(angle * (Math.PI / 180)) * velocity},
         radius: 15,
-        mass: 0.2,
+        mass: 0.3,
         restitution: -0.6
     };
     projectileArea = Math.PI * projectile.radius * projectile.radius / (10000); /* m^2 */
@@ -38,7 +42,12 @@ function initializeProjectile(event) {
         y: 0,
         isDown: false
     };
-    console.log('projectile initial position: '+ projectile.position.x + ', ' + projectile.position.y);
+    console.log('projectile initial position: ' + projectile.position.x +
+        ' (x), ' + projectile.position.y + ' (y)');
+    console.log('initial angle (counter clockwise): ' + angle + 'º, and initial velocity: ' + velocity);
+    console.log('projectile initial velocity: ' + projectile.velocity.x +
+    ' (v_x), ' + projectile.velocity.y + ' (v_y)');
+
 }
 
 var loop = function() {
@@ -59,10 +68,10 @@ var loop = function() {
         projectile.velocity.x += ax * frameRate;
         projectile.velocity.y += ay * frameRate;
 
-        /* testing if the projectile already stopped*/
-        if (Math.abs(projectile.velocity.x) <= 0.20 &&
+        /* testing if the projectile already stopped */
+        if (Math.abs(projectile.velocity.x) <= 0.50 &&
             projectile.position.y == canvas.height - projectile.radius &&
-            Math.abs(projectile.velocity.y) <= 0.2) {
+            Math.abs(projectile.velocity.y) <= 0.50) {
                 console.log('houston, we hit the ground to a full stop!');
                 projectile.velocity.x = 0;
                 projectile.velocity.y = 0;
@@ -90,9 +99,9 @@ var loop = function() {
         drawBall();
     }
     else {
-        ctx.clearRect(0, 0, width, height);
         clearInterval(loopTimer);
         hitGround = false;
+        return 0;
     }
 };
 
@@ -114,9 +123,7 @@ function initializeCanvas() {
 }
 
 function drawProjectile(event) {
-    if (!hitGround) {
-        initializeProjectile(event);
-        initializeCanvas();
-        loopTimer = setInterval(loop, frameDelay);
-    }
+    initializeProjectile(event);
+    initializeCanvas();
+    loopTimer = setInterval(loop, frameDelay);
 }
