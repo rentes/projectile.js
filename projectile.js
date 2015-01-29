@@ -26,7 +26,6 @@ function initializeProjectile(event) {
 }
 
 function drawBall() {
-    console.log('no drawBall');
     ctx.clearRect(0, 0, width, height);
     ctx.save();
     ctx.beginPath();
