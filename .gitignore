@@ -1,2 +1,5 @@
 ## Specific to WebStorm:
 /.idea/
+
+## Specific to Grunt:
+/node_modules/
