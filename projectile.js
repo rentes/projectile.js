@@ -1,8 +1,9 @@
 /**
  * Projectile project.
  */
-var posX; /* mouse position co-ordinate X */
-var posY; /* mouse position co-ordinate Y */
+/* mouse position co-ordinate X and Y */
+var posX;
+var posY;
 
 /* canvas details */
 var width = 800;
@@ -17,7 +18,6 @@ var nrClicks = 0;
 /* projectile details */
 var projectile;
 var mouse;
-var gravity_acceleration = 9.81; /* gravity acceleration (m / s^2) */
 var Cd = 0.47; /* drag coefficient (dimensionless) */
 var rho = 1.22; /* density of the projectile (kg / m^3) */
 var projectileArea;
@@ -50,32 +50,43 @@ function initializeProjectile(event) {
 
 }
 
-var loop = function() {
-    /* Do the physics - http://en.wikipedia.org/wiki/Drag_(physics) */
+function drawBall() {
+    "use strict";
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(projectile.position.x, projectile.position.y, projectile.radius, 0, 2 * Math.PI, false);
+    ctx.lineWidth = 1;
+    ctx.fillStyle = 'grey';
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+}
+
+function calculateDragForce(component) {
+    "use strict";
+    /*  Drag force: Fd = -1/2 * Cd * A * rho * v * v */
+    var drag = -0.5 * Cd * projectileArea * rho * component * component * component / Math.abs(component);
+    return (isNaN(drag) ? 0 : drag);
+}
+
+var loop = function () {
+    "use strict";
+    /* Let's do the physics - http://en.wikipedia.org/wiki/Drag_(physics) */
     if (!hitGround) {
-        /*  Drag force: Fd = -1/2 * Cd * A * rho * v * v */
-        var Fx = -0.5 * Cd * projectileArea * rho * projectile.velocity.x * projectile.velocity.x * projectile.velocity.x / Math.abs(projectile.velocity.x);
-        var Fy = -0.5 * Cd * projectileArea * rho * projectile.velocity.y * projectile.velocity.y * projectile.velocity.y / Math.abs(projectile.velocity.y);
-
-        Fx = (isNaN(Fx) ? 0 : Fx);
-        Fy = (isNaN(Fy) ? 0 : Fy);
-
         /* Calculate acceleration ( F = ma ) */
-        var ax = Fx / projectile.mass;
-        var ay = gravity_acceleration + (Fy / projectile.mass);
+        var ax = calculateDragForce(projectile.velocity.x) / projectile.mass;
 
         /* Integrate to get velocity */
         projectile.velocity.x += ax * frameRate;
-        projectile.velocity.y += ay * frameRate;
+        projectile.velocity.y += 9.81 * frameRate; /* 9.81 is the gravity acceleration */
 
         /* testing if the projectile already stopped */
-        if (Math.abs(projectile.velocity.x) <= 1.1 &&
-            projectile.position.y == canvas.height - projectile.radius &&
-            Math.abs(projectile.velocity.y) <= 0.50) {
-                console.log('houston, we hit the ground to a full stop!');
-                projectile.velocity.x = 0;
-                projectile.velocity.y = 0;
-                hitGround = true;
+        if (Math.abs(projectile.velocity.x) <= 1.1 && projectile.position.y === canvas.height - projectile.radius && Math.abs(projectile.velocity.y) <= 0.50) {
+            console.log('houston, we hit the ground to a full stop!');
+            projectile.velocity.x = 0;
+            projectile.velocity.y = 0;
+            hitGround = true;
         }
 
         /* Integrate to get position */
@@ -100,40 +111,29 @@ var loop = function() {
     }
 };
 
-function drawBall() {
-    ctx.clearRect(0, 0, width, height);
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(projectile.position.x, projectile.position.y, projectile.radius, 0, 2 * Math.PI, false);
-    ctx.lineWidth = 1;
-    ctx.fillStyle = 'grey';
-    ctx.fill();
-    ctx.closePath();
-    ctx.restore();
-}
-
 function initializeCanvas() {
+    "use strict";
     canvas = document.getElementById('projectile');
     ctx = canvas.getContext('2d');
 }
 
 function startProjectile(event) {
+    "use strict";
     initializeProjectile(event);
     initializeCanvas();
     loopTimer = setInterval(loop, frameDelay);
 }
 
 function drawProjectile(event) {
+    "use strict";
     nrClicks += 1;
-    if (nrClicks > 1 && hitGround == false) {
+    if (nrClicks > 1 && hitGround === false) {
         alert('please wait for the projectile to stop.');
-    }
-    else if (hitGround == true) { /* after projectile animation is completed */
+    } else if (hitGround === true) { /* after projectile animation is completed */
         hitGround = false; /* reset the var to acknowledge if the projectile has stopped */
         clearInterval(loopTimer);
         startProjectile(event);
-    }
-    else { /* first projectile animation */
+    } else { /* first projectile animation */
         startProjectile(event);
     }
 }
