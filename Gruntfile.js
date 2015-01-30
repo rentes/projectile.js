@@ -11,11 +11,18 @@ module.exports = function(grunt) {
                     src: '<%= pkg.name %>.js',
                     dest: 'build/<%= pkg.name %>.min.js'
                 }
+            },
+            cssmin: {
+                dist: {
+                    src: '<%= pkg.name %>.css',
+                    dest: 'build/<%= pkg.name %>.min.css'
+                }
             }
         });
-    /* Loads the plugin that provides the 'uglify' task */
+    /* Loads the plugins that provides the tasks */
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-yui-compressor');
 
     /* Default tasks */
-    grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('default', ['uglify', 'cssmin']);
 };

@@ -21,6 +21,7 @@
   "homepage": "https://github.com/rentes/projectile.js",
   "devDependencies": {
     "grunt": "^0.4.5",
-    "grunt-contrib-uglify": "^0.7.0"
+    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-yui-compressor": "^0.3.3"
   }
 }
