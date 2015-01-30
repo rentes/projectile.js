@@ -12,6 +12,7 @@ var ctx;
 var frameRate = 1 / 40; /* seconds */
 var frameDelay = frameRate * 1000; /* milli-seconds */
 var loopTimer;
+var nrClicks = 0;
 
 /* projectile details */
 var projectile;
@@ -97,11 +98,6 @@ var loop = function() {
         /* draw the ball */
         drawBall();
     }
-    else {
-        clearInterval(loopTimer);
-        hitGround = false;
-        return 0;
-    }
 };
 
 function drawBall() {
@@ -121,8 +117,23 @@ function initializeCanvas() {
     ctx = canvas.getContext('2d');
 }
 
-function drawProjectile(event) {
+function startProjectile(event) {
     initializeProjectile(event);
     initializeCanvas();
     loopTimer = setInterval(loop, frameDelay);
+}
+
+function drawProjectile(event) {
+    nrClicks += 1;
+    if (nrClicks > 1 && hitGround == false) {
+        alert('please wait for the projectile to stop.');
+    }
+    else if (hitGround == true) { /* after projectile animation is completed */
+        hitGround = false; /* reset the var to acknowledge if the projectile has stopped */
+        clearInterval(loopTimer);
+        startProjectile(event);
+    }
+    else { /* first projectile animation */
+        startProjectile(event);
+    }
 }
