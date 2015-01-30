@@ -15,18 +15,18 @@ var ctx;
 var frameRate = 1 / 40; /* seconds */
 var frameDelay = frameRate * 1000; /* milli-seconds */
 var loopTimer;
-var nrClicks = 0;
+var nrClicks = 0; /* controls the number of clicks done by the user on the canvas */
 
 /* projectile details */
 var projectile;
-var mouse;
 var Cd = 0.47; /* drag coefficient (dimensionless) */
 var rho = 1.22; /* density of the projectile (kg / m^3) */
 var projectileArea;
-var hitGround = false;
+var hitGround = false; /* to acknowledge if the projectile has stopped */
 var velocity;
 var angle;
 
+/* creates a projectile */
 function initializeProjectile(event) {
     "use strict";
     posX = event.clientX;
@@ -41,17 +41,12 @@ function initializeProjectile(event) {
         restitution: -0.6
     };
     projectileArea = Math.PI * projectile.radius * projectile.radius / (10000); /* m^2 */
-    mouse = {
-        x: 0,
-        y: 0,
-        isDown: false
-    };
     console.log('projectile initial position: ' + projectile.position.x + ' (x), ' + projectile.position.y + ' (y)');
     console.log('initial angle (counter clockwise): ' + angle + 'º, and initial velocity: ' + velocity);
     console.log('projectile initial velocity: ' + projectile.velocity.x + ' (v_x), ' + projectile.velocity.y + ' (v_y)');
-
 }
 
+/* draws the ball on the canvas */
 function drawBall() {
     "use strict";
     ctx.clearRect(0, 0, width, height);
@@ -65,6 +60,8 @@ function drawBall() {
     ctx.restore();
 }
 
+/* calculates the drag force */
+/* http://en.wikipedia.org/wiki/Drag_(physics) */
 function calculateDragForce(component) {
     "use strict";
     /*  Drag force: Fd = -1/2 * Cd * A * rho * v * v */
@@ -74,7 +71,6 @@ function calculateDragForce(component) {
 
 var loop = function () {
     "use strict";
-    /* Let's do the physics - http://en.wikipedia.org/wiki/Drag_(physics) */
     if (!hitGround) {
         /* Calculate acceleration ( F = ma ) */
         var ax = calculateDragForce(projectile.velocity.x) / projectile.mass;
@@ -113,12 +109,14 @@ var loop = function () {
     }
 };
 
+/* initializes the canvas */
 function initializeCanvas() {
     "use strict";
     canvas = document.getElementById('projectile');
     ctx = canvas.getContext('2d');
 }
 
+/* creates the projectile and enters the loop */
 function startProjectile(event) {
     "use strict";
     initializeProjectile(event);
@@ -126,13 +124,14 @@ function startProjectile(event) {
     loopTimer = setInterval(loop, frameDelay);
 }
 
+/* entry point for out projectile project */
 function drawProjectile(event) {
     "use strict";
     nrClicks += 1;
     if (nrClicks > 1 && hitGround === false) {
         alert('please wait for the projectile to stop.');
     } else if (hitGround === true) { /* after projectile animation is completed */
-        hitGround = false; /* reset the var to acknowledge if the projectile has stopped */
+        hitGround = false; /* reset the hitGround var */
         clearInterval(loopTimer);
         startProjectile(event);
     } else { /* first projectile animation */
