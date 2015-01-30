@@ -68,7 +68,7 @@ var loop = function() {
         projectile.velocity.y += ay * frameRate;
 
         /* testing if the projectile already stopped */
-        if (Math.abs(projectile.velocity.x) <= 0.50 &&
+        if (Math.abs(projectile.velocity.x) <= 1.1 &&
             projectile.position.y == canvas.height - projectile.radius &&
             Math.abs(projectile.velocity.y) <= 0.50) {
                 console.log('houston, we hit the ground to a full stop!');
