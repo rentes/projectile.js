@@ -1,6 +1,8 @@
 /**
  * Projectile project.
  */
+/*jslint browser: true, devel: true */
+
 /* mouse position co-ordinate X and Y */
 var posX;
 var posY;
