@@ -1,11 +1,7 @@
 /**
  * Projectile project.
  */
-/*jslint browser: true, devel: true */
-
-/* mouse position co-ordinate X and Y */
-var posX;
-var posY;
+/*jslint browser: false, devel: false, vars: true */
 
 /* canvas details */
 var width = 800;
@@ -19,20 +15,17 @@ var nrClicks = 0; /* controls the number of clicks done by the user on the canva
 
 /* projectile details */
 var projectile;
-var Cd = 0.47; /* drag coefficient (dimensionless) */
-var rho = 1.22; /* density of the projectile (kg / m^3) */
-var projectileArea;
 var hitGround = false; /* to acknowledge if the projectile has stopped */
-var velocity;
-var angle;
 
 /* creates a projectile */
 function initializeProjectile(event) {
     "use strict";
-    posX = event.clientX;
-    posY = event.clientY;
-    velocity = Math.floor(Math.random() * 11); /* random number between 0 and 10 */
-    angle = Math.floor(Math.random() * 361); /* random number between 0 and 360 */
+    /* mouse position co-ordinate X and Y */
+    var posX = event.clientX;
+    var posY = event.clientY;
+    /* projectile details */
+    var velocity = Math.floor(Math.random() * 11); /* random number between 0 and 10 */
+    var angle = Math.floor(Math.random() * 361); /* random number between 0 and 360 */
     projectile = {
         position: {x: posX, y: posY},
         velocity: {x: Math.cos(angle * (Math.PI / 180)) * velocity, y: -Math.sin(angle * (Math.PI / 180)) * velocity},
@@ -40,7 +33,6 @@ function initializeProjectile(event) {
         mass: 0.7,
         restitution: -0.6
     };
-    projectileArea = Math.PI * projectile.radius * projectile.radius / (10000); /* m^2 */
     console.log('projectile initial position: ' + projectile.position.x + ' (x), ' + projectile.position.y + ' (y)');
     console.log('initial angle (counter clockwise): ' + angle + 'º, and initial velocity: ' + velocity);
     console.log('projectile initial velocity: ' + projectile.velocity.x + ' (v_x), ' + projectile.velocity.y + ' (v_y)');
@@ -62,9 +54,12 @@ function drawBall() {
 
 /* calculates the drag force */
 /* http://en.wikipedia.org/wiki/Drag_(physics) */
+/*  Drag force: Fd = -1/2 * Cd * A * rho * v * v */
 function calculateDragForce(component) {
     "use strict";
-    /*  Drag force: Fd = -1/2 * Cd * A * rho * v * v */
+    var Cd = 0.47; /* drag coefficient */
+    var rho = 1.22; /* density of the projectile */
+    var projectileArea = Math.PI * projectile.radius * projectile.radius / (10000);
     var drag = -0.5 * Cd * projectileArea * rho * component * component * component / Math.abs(component);
     return (isNaN(drag) ? 0 : drag);
 }
