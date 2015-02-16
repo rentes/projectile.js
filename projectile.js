@@ -155,10 +155,10 @@ window.requestInterval = function (fn, delay) {
             start = new Date().getTime();
         }
 
-        handle.value = requestAnimFrame(loop);
+        handle.value = window.requestAnimFrame(loop);
     }
 
-    handle.value = requestAnimFrame(loop);
+    handle.value = window.requestAnimFrame(loop);
     return handle;
 };
 
@@ -182,7 +182,7 @@ function startProjectile(event) {
     "use strict";
     initializeProjectile(event);
     initializeCanvas();
-    loopTimer = requestInterval(loop, frameDelay);
+    loopTimer = window.requestInterval(loop, frameDelay);
 }
 
 /* entry point for out projectile project */
@@ -193,7 +193,7 @@ function drawProjectile(event) {
         alert('please wait for the projectile to stop.');
     } else if (hitGround === true) { /* after projectile animation is completed */
         hitGround = false; /* reset the hitGround var */
-        clearRequestInterval(loopTimer);
+        window.clearRequestInterval(loopTimer);
         startProjectile(event);
     } else { /* first projectile animation */
         startProjectile(event);
