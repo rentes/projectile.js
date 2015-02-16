@@ -126,7 +126,7 @@ window.requestAnimFrame = (function () {
         function (callback) {
             window.setTimeout(callback, 1000 / 60);
         };
-})();
+}());
 
 /**
  * Behaves the same as setInterval except uses requestAnimationFrame() where possible for better performance
