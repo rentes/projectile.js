@@ -1,7 +1,7 @@
 /**
  * Projectile project.
  */
-/*jslint browser: false, devel: false, vars: true */
+/*jslint browser: true, devel: true, vars: true */
 
 /* canvas details */
 var width = 800;
@@ -17,7 +17,9 @@ var nrClicks = 0; /* controls the number of clicks done by the user on the canva
 var projectile;
 var hitGround = false; /* to acknowledge if the projectile has stopped */
 
-/* creates a projectile */
+/**
+ *  creates a projectile
+ */
 function initializeProjectile(event) {
     "use strict";
     /* mouse position co-ordinate X and Y */
@@ -38,7 +40,9 @@ function initializeProjectile(event) {
     console.log('projectile initial velocity: ' + projectile.velocity.x + ' (v_x), ' + projectile.velocity.y + ' (v_y)');
 }
 
-/* draws the ball on the canvas */
+/**
+ *  draws the ball on the canvas
+ */
 function drawBall() {
     "use strict";
     ctx.clearRect(0, 0, width, height);
@@ -52,9 +56,11 @@ function drawBall() {
     ctx.restore();
 }
 
-/* calculates the drag force */
-/* http://en.wikipedia.org/wiki/Drag_(physics) */
-/*  Drag force: Fd = -1/2 * Cd * A * rho * v * v */
+/**
+ * calculates the drag force
+ * http://en.wikipedia.org/wiki/Drag_(physics)
+ * Drag force: Fd = -1/2 * Cd * A * rho * v * v
+ */
 function calculateDragForce(component) {
     "use strict";
     var Cd = 0.47; /* drag coefficient */
@@ -64,6 +70,9 @@ function calculateDragForce(component) {
     return (isNaN(drag) ? 0 : drag);
 }
 
+/**
+ * the rendering loop
+ */
 var loop = function () {
     "use strict";
     if (!hitGround) {
@@ -104,7 +113,9 @@ var loop = function () {
     }
 };
 
-/* initializes the canvas */
+/**
+ *  initializes the canvas
+ */
 function initializeCanvas() {
     "use strict";
     canvas = document.getElementById('projectile');
@@ -143,21 +154,19 @@ window.requestInterval = function (fn, delay) {
         return window.setInterval(fn, delay);
     }
 
-    var start = new Date().getTime(),
-        handle = Object.create(null);
+    var start = new Date().getTime();
+    var handle = Object.create(null);
 
     function loop() {
-        var current = new Date().getTime(),
-            delta = current - start;
+        var current = new Date().getTime();
+        var delta = current - start;
 
         if (delta >= delay) {
             fn.call();
             start = new Date().getTime();
         }
-
         handle.value = window.requestAnimFrame(loop);
     }
-
     handle.value = window.requestAnimFrame(loop);
     return handle;
 };
@@ -168,16 +177,26 @@ window.requestInterval = function (fn, delay) {
  */
 window.clearRequestInterval = function (handle) {
     "use strict";
-    window.cancelAnimationFrame ? window.cancelAnimationFrame(handle.value) :
-            window.webkitCancelAnimationFrame ? window.webkitCancelAnimationFrame(handle.value) :
-                    window.webkitCancelRequestAnimationFrame ? window.webkitCancelRequestAnimationFrame(handle.value) :
-                            window.mozCancelRequestAnimationFrame ? window.mozCancelRequestAnimationFrame(handle.value) :
-                                    window.oCancelRequestAnimationFrame ? window.oCancelRequestAnimationFrame(handle.value) :
-                                            window.msCancelRequestAnimationFrame ? window.msCancelRequestAnimationFrame(handle.value) :
-                                                    clearInterval(handle);
+    if (window.cancelAnimationFrame) {
+        window.cancelAnimationFrame(handle.value);
+    } else if (window.webkitCancelAnimationFrame) {
+        window.webkitCancelAnimationFrame(handle.value);
+    } else if (window.webkitCancelRequestAnimationFrame) {
+        window.webkitCancelRequestAnimationFrame(handle.value);
+    } else if (window.mozCancelRequestAnimationFrame) {
+        window.mozCancelRequestAnimationFrame(handle.value);
+    } else if (window.oCancelRequestAnimationFrame) {
+        window.oCancelRequestAnimationFrame(handle.value);
+    } else if (window.msCancelRequestAnimationFrame) {
+        window.msCancelRequestAnimationFrame(handle.value);
+    } else {
+        clearInterval(handle);
+    }
 };
 
-/* creates the projectile and enters the loop */
+/**
+ *  creates the projectile and enters the loop
+ */
 function startProjectile(event) {
     "use strict";
     initializeProjectile(event);
@@ -185,14 +204,16 @@ function startProjectile(event) {
     loopTimer = window.requestInterval(loop, frameDelay);
 }
 
-/* entry point for out projectile project */
+/**
+ *  entry point for the projectile project
+ */
 function drawProjectile(event) {
     "use strict";
     nrClicks += 1;
     if (nrClicks > 1 && hitGround === false) {
         alert('please wait for the projectile to stop.');
     } else if (hitGround === true) { /* after projectile animation is completed */
-        hitGround = false; /* reset the hitGround var */
+        hitGround = false; /* resets the hitGround var */
         window.clearRequestInterval(loopTimer);
         startProjectile(event);
     } else { /* first projectile animation */
