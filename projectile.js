@@ -133,13 +133,15 @@ window.requestAnimFrame = (function () {
  * @param {function} fn The callback function
  * @param {int} delay The delay in milliseconds
  */
-window.requestInterval = function(fn, delay) {
-    if( !window.requestAnimationFrame       &&
-        !window.webkitRequestAnimationFrame &&
-        !(window.mozRequestAnimationFrame && window.mozCancelRequestAnimationFrame) && // Firefox 5 ships without cancel support
-        !window.oRequestAnimationFrame      &&
-        !window.msRequestAnimationFrame)
+window.requestInterval = function (fn, delay) {
+    "use strict";
+    if (!window.requestAnimationFrame &&
+            !window.webkitRequestAnimationFrame &&
+            !(window.mozRequestAnimationFrame && window.mozCancelRequestAnimationFrame) && // Firefox 5 ships without cancel support
+            !window.oRequestAnimationFrame &&
+            !window.msRequestAnimationFrame) {
         return window.setInterval(fn, delay);
+    }
 
     var start = new Date().getTime(),
         handle = Object.create(null);
@@ -148,7 +150,7 @@ window.requestInterval = function(fn, delay) {
         var current = new Date().getTime(),
             delta = current - start;
 
-        if(delta >= delay) {
+        if (delta >= delay) {
             fn.call();
             start = new Date().getTime();
         }
@@ -164,14 +166,15 @@ window.requestInterval = function(fn, delay) {
  * Behaves the same as clearInterval except uses cancelRequestAnimationFrame() where possible for better performance
  * @param {int|object} handle The callback function
  */
-window.clearRequestInterval = function(handle) {
+window.clearRequestInterval = function (handle) {
+    "use strict";
     window.cancelAnimationFrame ? window.cancelAnimationFrame(handle.value) :
-        window.webkitCancelAnimationFrame ? window.webkitCancelAnimationFrame(handle.value) :
-            window.webkitCancelRequestAnimationFrame ? window.webkitCancelRequestAnimationFrame(handle.value) : /* Support for legacy API */
-                window.mozCancelRequestAnimationFrame ? window.mozCancelRequestAnimationFrame(handle.value) :
-                    window.oCancelRequestAnimationFrame	? window.oCancelRequestAnimationFrame(handle.value) :
-                        window.msCancelRequestAnimationFrame ? window.msCancelRequestAnimationFrame(handle.value) :
-                            clearInterval(handle);
+            window.webkitCancelAnimationFrame ? window.webkitCancelAnimationFrame(handle.value) :
+                    window.webkitCancelRequestAnimationFrame ? window.webkitCancelRequestAnimationFrame(handle.value) :
+                            window.mozCancelRequestAnimationFrame ? window.mozCancelRequestAnimationFrame(handle.value) :
+                                    window.oCancelRequestAnimationFrame ? window.oCancelRequestAnimationFrame(handle.value) :
+                                            window.msCancelRequestAnimationFrame ? window.msCancelRequestAnimationFrame(handle.value) :
+                                                    clearInterval(handle);
 };
 
 /* creates the projectile and enters the loop */
