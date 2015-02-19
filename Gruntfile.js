@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         });
     /* Loads the plugins that provides the tasks */
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-yui-compressor');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     /* Default tasks */
     grunt.registerTask('default', ['uglify', 'cssmin']);
