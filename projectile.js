@@ -195,6 +195,61 @@ window.clearRequestInterval = function (handle) {
 };
 
 /**
+ * Behaves the same as setTimeout except uses requestAnimationFrame() where possible for better performance
+ * @param {function} fn The callback function
+ * @param {int} delay The delay in milliseconds
+ */
+window.requestTimeout = function (fn, delay) {
+    "use strict";
+    if (!window.requestAnimationFrame && !window.webkitRequestAnimationFrame &&
+            !(window.mozRequestAnimationFrame && window.mozCancelRequestAnimationFrame) && // Firefox 5 ships without cancel support
+            !window.oRequestAnimationFrame && !window.msRequestAnimationFrame) {
+        return window.setTimeout(fn, delay);
+    }
+
+    var start = new Date().getTime(),
+        handle = Object.create(null);
+
+    function loop() {
+        var current = new Date().getTime();
+        var delta = current - start;
+
+        if (delta >= delay) {
+            fn.call();
+        } else {
+            handle.value = window.requestAnimFrame(loop);
+        }
+    }
+
+    handle.value = window.requestAnimFrame(loop);
+    return handle;
+};
+
+/**
+ * Behaves the same as clearTimeout except uses cancelRequestAnimationFrame() where possible for better performance
+ * @param {int|object} handle The callback function
+ */
+window.clearRequestTimeout = function (handle) {
+    "use strict";
+    if (window.cancelAnimationFrame) {
+        window.cancelAnimationFrame(handle.value);
+    } else if (window.webkitCancelAnimationFrame) {
+        window.webkitCancelAnimationFrame(handle.value);
+    } else if (window.webkitCancelRequestAnimationFrame) {
+        window.webkitCancelRequestAnimationFrame(handle.value);
+        /* Support for legacy API */
+    } else if (window.mozCancelRequestAnimationFrame) {
+        window.mozCancelRequestAnimationFrame(handle.value);
+    } else if (window.oCancelRequestAnimationFrame) {
+        window.oCancelRequestAnimationFrame(handle.value);
+    } else if (window.msCancelRequestAnimationFrame) {
+        window.msCancelRequestAnimationFrame(handle.value);
+    } else {
+        clearTimeout(handle);
+    }
+};
+
+/**
  *  creates the projectile and enters the loop
  */
 function startProjectile(event) {
