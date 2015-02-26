@@ -123,9 +123,10 @@ function initializeCanvas() {
 }
 
 /**
- * requestAnimationFrame() shim by Paul Irish
- * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
- * also, please see https://gist.github.com/joelambert/1002116
+ * requestAnimationFrame() by Miguel Rentes
+ * Corrects all JSLint warnings and uses a browser-compatible requestAnimFrame() function
+ * Based on Paul Irish's work - http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+ * Also, please see https://gist.github.com/joelambert/1002116
  */
 window.requestAnimFrame = (function () {
     "use strict";
